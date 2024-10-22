@@ -5,9 +5,8 @@ import docx
 import csv
 from werkzeug.utils import secure_filename
 import google.generativeai as genai
-from fpdf import FPDF  # pip install fpdf
+from fpdf import FPDF  
 
-# Set your API key
 os.environ["GOOGLE_API_KEY"] = "AIzaSyBg6-xTEEppzlgJEE17IjkTpR6TbV2zsrw"
 genai.configure(api_key=os.environ["GOOGLE_API_KEY"])
 model = genai.GenerativeModel("models/gemini-1.5-pro")
@@ -44,7 +43,6 @@ def Question_mcqs_generator(input_text, num_questions):
     - Four answer options (labeled A, B, C, D)
     - The correct answer clearly indicated
     Format:
-    ## MCQ
     Question: [question]
     A) [option A]
     B) [option B]
@@ -69,7 +67,7 @@ def create_pdf(mcqs, filename):
     for mcq in mcqs.split("## MCQ"):
         if mcq.strip():
             pdf.multi_cell(0, 10, mcq.strip())
-            pdf.ln(5)  # Add a line break
+            pdf.ln(5) 
 
     pdf_path = os.path.join(app.config['RESULTS_FOLDER'], filename)
     pdf.output(pdf_path)
@@ -91,20 +89,17 @@ def generate_mcqs():
         file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
         file.save(file_path)
 
-        # Extract text from the uploaded file
         text = extract_text_from_file(file_path)
 
         if text:
             num_questions = int(request.form['num_questions'])
             mcqs = Question_mcqs_generator(text, num_questions)
 
-            # Save the generated MCQs to a file
             txt_filename = f"generated_mcqs_{filename.rsplit('.', 1)[0]}.txt"
             pdf_filename = f"generated_mcqs_{filename.rsplit('.', 1)[0]}.pdf"
             save_mcqs_to_file(mcqs, txt_filename)
             create_pdf(mcqs, pdf_filename)
 
-            # Display and allow downloading
             return render_template('results.html', mcqs=mcqs, txt_filename=txt_filename, pdf_filename=pdf_filename)
     return "Invalid file format"
 
