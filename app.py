@@ -43,6 +43,7 @@ def Question_mcqs_generator(input_text, num_questions):
     - Four answer options (labeled A, B, C, D)
     - The correct answer clearly indicated
     Format:
+    ## MCQ
     Question: [question]
     A) [option A]
     B) [option B]
